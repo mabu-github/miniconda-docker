@@ -19,9 +19,11 @@ RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
 # Create the environment first as it changes less often than the code.
 COPY environment.yml requirements.txt "${APP_DIR}"/
-RUN conda config --remove channels defaults \
+RUN pip config set global.no-cache-dir false \
+    && conda config --remove channels defaults \
     && for channel in ${CHANNELS}; do conda config --add channels $channel; done \
-    && conda env create -f "${APP_DIR}"/environment.yml && conda clean -tipsy
+    && conda env create -f "${APP_DIR}"/environment.yml && conda clean -iptfy \
+    && rm ~/.condarc
 
 # Copy the code.
 COPY *.py "${APP_DIR}"/
