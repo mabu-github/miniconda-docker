@@ -1,0 +1,7 @@
+name: miniconda-docker-app
+dependencies:
+  - python=3.9.7
+  # add conda dependencies here
+  - pip:
+    # add pip dependencies here
+    - -r requirements.txt
