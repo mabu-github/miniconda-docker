@@ -32,7 +32,7 @@ RUN pip config set global.no-cache-dir false \
 # Copy the code.
 COPY *.py "${APP_DIR}"/
 
-ENV PATH /opt/conda/envs/$(head -n 1 "${APP_RID}"/environment.yml | sed 's/.*: //')/bin:$PATH
+ENV PATH /opt/conda/envs/$(head -n 1 "${APP_DIR}"/environment.yml | sed 's/.*: //')/bin:$PATH
 ENV PYTHONPATH "${APP_DIR}":$PYTHONPATH
 
 EXPOSE 8080
