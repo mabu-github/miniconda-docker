@@ -7,6 +7,7 @@ ARG DATA_DIR=/data
 # Set this build argument to configure conda channels. The list is whitespace separated.
 # Do NOT use the default channel if you don't have the license for it.
 ARG CHANNELS=https://conda.anaconda.org/conda-forge/
+ARG PIP_INDEX_URL=https://pypi.org/simple
 
 # Install additional software.
 #RUN apt-get update && apt-get install -y ... && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -18,12 +19,15 @@ RUN groupadd "${USER}" -g 1000 && \
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
 # Create the environment first as it changes less often than the code.
+COPY cert.pem /root/cert.pem
 COPY environment.yml requirements.txt "${APP_DIR}"/
 RUN pip config set global.no-cache-dir false \
+    && pip config set global.cert ~/cert.pem \
+    && pip config set global.index-url "${PIP_INDEX_URL}" \
     && conda config --remove channels defaults \
     && for channel in ${CHANNELS}; do conda config --add channels $channel; done \
     && conda env create -f "${APP_DIR}"/environment.yml && conda clean -iptfy \
-    && rm ~/.condarc
+    && rm -rf ~/.condarc ~/.config/pip ~/cert.pem
 
 # Copy the code.
 COPY *.py "${APP_DIR}"/
