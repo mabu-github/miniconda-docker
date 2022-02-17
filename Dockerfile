@@ -8,6 +8,7 @@ ARG DATA_DIR=/data
 # Do NOT use the default channel if you don't have the license for it.
 ARG CHANNELS=https://conda.anaconda.org/conda-forge/
 ARG PIP_INDEX_URL=https://pypi.org/simple
+ARG ENVIRONMENT_NAME=miniconda-docker-app
 
 # Install additional software.
 #RUN apt-get update && apt-get install -y ... && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -32,7 +33,7 @@ RUN pip config set global.no-cache-dir false \
 # Copy the code.
 COPY *.py "${APP_DIR}"/
 
-ENV PATH /opt/conda/envs/$(head -n 1 "${APP_DIR}"/environment.yml | sed 's/.*: //')/bin:$PATH
+ENV PATH /opt/conda/envs/${ENVIRONMENT_NAME}/bin:$PATH
 ENV PYTHONPATH "${APP_DIR}":$PYTHONPATH
 
 EXPOSE 8080
