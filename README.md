@@ -17,8 +17,19 @@ docker-compose down
 ```
 host=pypi.org port=443; echo | \
     openssl s_client -connect "${host}":"${port}" -showcerts 2>/dev/null | \
-    sed -n -e '/-.BEGIN/,/-.END/ p' > cert.pem
+    sed -n -e '/-.BEGIN/,/-.END/ p' > cert_pip.pem
 ```
 
-Manualy add the root ca cert to the top of the resulting file. Visit [GlobalSign](https://support.globalsign.com/ca-certificates/root-certificates/globalsign-root-certificates)
+```
+host=conda.anaconda.org port=443; echo | \
+    openssl s_client -connect "${host}":"${port}" -showcerts 2>/dev/null | \
+    sed -n -e '/-.BEGIN/,/-.END/ p' > cert_conda.pem
+```
+
+Manualy add the root ca cert to the top of the resulting file. 
+
+Pypi: Visit [GlobalSign](https://support.globalsign.com/ca-certificates/root-certificates/globalsign-root-certificates)
+to get the GlobalSign Root CA certificates (click 'View in Base64' to get it in PEM format).
+
+Conda: Visit [DigiCert](https://www.digicert.com/kb/digicert-root-certificates.htm)
 to get the GlobalSign Root CA certificates (click 'View in Base64' to get it in PEM format).

@@ -20,15 +20,16 @@ RUN groupadd "${USER}" -g 1000 && \
 RUN mkdir -p "${APP_DIR}" "${DATA_DIR}"
 
 # Create the environment first as it changes less often than the code.
-COPY cert.pem /root/cert.pem
+COPY cert_pip.pem cert_conda.pem /root/
 COPY environment.yml requirements.txt "${APP_DIR}"/
 RUN pip config set global.no-cache-dir false \
-    && pip config set global.cert ~/cert.pem \
+    && pip config set global.cert /root/cert_pip.pem \
     && pip config set global.index-url "${PIP_INDEX_URL}" \
     && conda config --remove channels defaults \
+    && conda config --set ssl_verify /root/cert_conda.pem \
     && for channel in ${CHANNELS}; do conda config --add channels $channel; done \
     && conda env create -f "${APP_DIR}"/environment.yml && conda clean -iptfy \
-    && rm -rf ~/.condarc ~/.config/pip ~/cert.pem
+    && rm -rf /root/.condarc /root/.config/pip /root/cert_pip.pem /root/cert_conda.pem
 
 # Copy the code.
 COPY *.py "${APP_DIR}"/
